@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include <ISAMobile.h>
-#include "move.cpp"
+#include "move.h"
 
 QMC5883 qmc;
 
