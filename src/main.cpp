@@ -4,6 +4,10 @@
 
 QMC5883 qmc;
 
+int16_t startX = 0;
+int16_t startY = 0;
+int16_t startZ = 0;
+
 void setup()
 {
     for (int i = (int)UltraSoundSensor::__first; i <= (int)UltraSoundSensor::__last; i++)
@@ -35,10 +39,39 @@ void setup()
 
     Wire.begin();
     qmc.init();
-
     Serial1.begin(9600); // HC06
+    qmc.measure();
+    startX = qmc.getX();
+    startY = qmc.getY();
+    startZ = qmc.getZ();
 }
 
 void loop()
 {
+    qmc.measure();
+    // int16_t x = qmc.getX();
+    // int16_t y = qmc.getY();
+    // int16_t z = qmc.getZ();
+    // char buf[64];
+    // sprintf(buf, "\n x=%5d, y=%5d, z=%5d", x ,y ,z);
+    // Serial.print(buf);
+    moveForward(100);
+    delay(1000);
+    stop();
+    delay(1000);
+    moveForward(PowerSideEnum::Right, 100);
+    moveBackwards(PowerSideEnum::Left, 100);
+    
+    while(startX + qmc.getX() < 720 && startY - qmc.getY() < 100)
+    {
+        qmc.measure();
+        delay(10);
+    }
+    
+    delay(1000);
+    stop();
+    delay(1000);
+
+
+
 }
