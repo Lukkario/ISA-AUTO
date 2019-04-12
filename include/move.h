@@ -1,0 +1,1 @@
+void moveForward(PowerSideEnum side, int speed);
