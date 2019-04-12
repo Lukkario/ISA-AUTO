@@ -1,6 +1,12 @@
 #include <Arduino.h>
 #include <ISAMobile.h>
 
+void moveForward(int level)
+{
+    moveForward(PowerSideEnum::Left, level);
+    moveForward(PowerSideEnum::Right, level);
+}
+
 void moveForward(PowerSideEnum side, int speed)
 {
     if (side == PowerSideEnum::Right)
@@ -17,12 +23,10 @@ void moveForward(PowerSideEnum side, int speed)
     }
 }
 
-void stop()
+void moveBackwards(int level)
 {
-    digitalWrite(A_PHASE, 0);
-    analogWrite(A_ENABLE, 0);
-    digitalWrite(B_PHASE, 0);
-    analogWrite(B_ENABLE, 0);
+    moveBackwards(PowerSideEnum::Left, level);
+    moveBackwards(PowerSideEnum::Right, level);
 }
 
 void moveBackwards(PowerSideEnum side, int speed)
@@ -41,6 +45,14 @@ void moveBackwards(PowerSideEnum side, int speed)
     }
 }
 
+void stop()
+{
+    digitalWrite(A_PHASE, 0);
+    analogWrite(A_ENABLE, 0);
+    digitalWrite(B_PHASE, 0);
+    analogWrite(B_ENABLE, 0);
+}
+
 void stop(PowerSideEnum side)
 {
     if (side == PowerSideEnum::Right)
@@ -55,16 +67,4 @@ void stop(PowerSideEnum side)
         digitalWrite(B_PHASE, 0);
         analogWrite(B_ENABLE, 0);
     }
-}
-
-void moveForward(int level)
-{
-    moveForward(PowerSideEnum::Left, level);
-    moveForward(PowerSideEnum::Right, level);
-}
-
-void moveBackwards(int level)
-{
-    moveBackwards(PowerSideEnum::Left, level);
-    moveBackwards(PowerSideEnum::Right, level);
 }
