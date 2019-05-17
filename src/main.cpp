@@ -19,16 +19,19 @@ void setup()
     }
 
     // Silniki
-    pinMode(A_PHASE, OUTPUT);
-    pinMode(A_ENABLE, OUTPUT);
-    pinMode(B_PHASE, OUTPUT);
-    pinMode(B_ENABLE, OUTPUT);
+    pinMode(LEFT_PWM, OUTPUT);
+  	pinMode(LEFT_IN1, OUTPUT);
+  	pinMode(LEFT_IN2, OUTPUT);
+
+  	pinMode(RIGHT_PWM, OUTPUT);
+  	pinMode(RIGHT_IN1, OUTPUT);
+  	pinMode(RIGHT_IN2, OUTPUT);
 
     //pinMode(MODE, OUTPUT); -- podłaczone na krótko ze stanem wysokim
     //digitalWrite(MODE, true);  -- podłaczone na krótko ze stanem wysokim
 
-    moveForward(PowerSideEnum::Left, 0);
-    moveForward(PowerSideEnum::Right, 0);
+    moveForward(EngineSelector::Left, 0);
+    moveForward(EngineSelector::Right, 0);
 
     // Wejścia enkoderowe
     pinMode(ENCODER_LEFT, INPUT);
@@ -59,15 +62,15 @@ void loop()
     delay(1000);
     stop();
     delay(1000);
-    moveForward(PowerSideEnum::Right, 100);
-    moveBackwards(PowerSideEnum::Left, 100);
-    
+    moveForward(EngineSelector::Right, 100);
+    moveBackwards(EngineSelector::Left, 100);
+
     while(startX + qmc.getX() < 720 && startY - qmc.getY() < 100)
     {
         qmc.measure();
         delay(10);
     }
-    
+
     delay(1000);
     stop();
     delay(1000);
