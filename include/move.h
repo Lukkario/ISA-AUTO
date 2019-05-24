@@ -50,6 +50,12 @@ void moveBackwards(int level)
     moveBackwards(EngineSelector::Right, level);
 }
 
+void turnRight(int level)
+{
+  moveForward(EngineSelector::Left, level);
+  moveBackwards(EngineSelector::Right, level);
+}
+
 void stop(EngineSelector side)
 {
     if (side == EngineSelector::Right)

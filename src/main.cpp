@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <math.h>
 #include <ISAMobile.h>
 #include "move.h"
 
@@ -7,6 +8,15 @@ QMC5883 qmc;
 int16_t startX = 0;
 int16_t startY = 0;
 int16_t startZ = 0;
+
+double radToDeg(int16_t x, int16_t y)
+{
+    // x = x-startX;
+    // y = y - startY;
+    double bearingDegrees = atan2(y, x) * (180.0 / M_PI); // convert to degrees
+    bearingDegrees = (bearingDegrees > 0.0 ? bearingDegrees : (360.0 + bearingDegrees)); // correct discontinuity
+    return bearingDegrees;
+}
 
 void setup()
 {
@@ -38,42 +48,32 @@ void setup()
     pinMode(ENCODER_RIGHT, INPUT);
 
     Serial.begin(9600);
-    Serial.print("Test... ");
+    // Serial.print("Test... ");
 
     Wire.begin();
     qmc.init();
-    Serial1.begin(9600); // HC06
-    qmc.measure();
-    startX = qmc.getX();
-    startY = qmc.getY();
-    startZ = qmc.getZ();
 }
 
 void loop()
 {
-    qmc.measure();
-    // int16_t x = qmc.getX();
-    // int16_t y = qmc.getY();
-    // int16_t z = qmc.getZ();
-    // char buf[64];
-    // sprintf(buf, "\n x=%5d, y=%5d, z=%5d", x ,y ,z);
-    // Serial.print(buf);
     moveForward(100);
-    delay(1000);
-    stop();
-    delay(1000);
-    moveForward(EngineSelector::Right, 100);
-    moveBackwards(EngineSelector::Left, 100);
+    delay(2000);
+   stop();
+   delay(100);
+   qmc.measure();
+   startX = qmc.getX();
+   startY = qmc.getY();
+    double deg = radToDeg(startX, startY);
 
-    while(startX + qmc.getX() < 720 && startY - qmc.getY() < 100)
+    turnRight(100);
+
+    while((deg > radToDeg(qmc.getX(), qmc.getY()) ? abs(deg - radToDeg(qmc.getX(), qmc.getY())) : abs(radToDeg(qmc.getX(), qmc.getY()) - deg) ) <= 90)
     {
+        // Serial.println(radToDeg(qmc.getX(), qmc.getY()));
         qmc.measure();
-        delay(10);
     }
-
-    delay(1000);
     stop();
-    delay(1000);
+    delay(100);
 
 
 
