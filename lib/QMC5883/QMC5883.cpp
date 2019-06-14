@@ -27,7 +27,7 @@ void QMC5883::reset(void)
 void QMC5883::init(void)
 {
 	this->writeRegister(0x0B, 0x01); // dokumentacja (tryb resetu)
-	
+
 	// konfiguracja
 	uint8_t mode = 0;
 	mode |= MODE_CONTINOUS;
@@ -35,7 +35,7 @@ void QMC5883::init(void)
 	mode |= RNG_8G;
 	mode |= OSR_512;
 	this->writeRegister(0x09, mode);
-	
+
 }
 
 void QMC5883::measure(void)
@@ -44,21 +44,21 @@ void QMC5883::measure(void)
 	Wire.beginTransmission(QMC_ADDRESS);
 	Wire.write(0x00);
 	Wire.endTransmission();
-	
+
 	// czytaj 6 bajtów
 	Wire.requestFrom(QMC_ADDRESS, (uint8_t)6);
 	int16_t x, y, z;
-	
+
 	// kolejność LSB, MSB
 	x = (int16_t)Wire.read();
 	x |= (int16_t)(Wire.read() << 8);
 
 	y = (int16_t)Wire.read();
 	y |= (int16_t)(Wire.read() << 8);
-  
+
 	z = (int16_t)Wire.read();
 	z |= (int16_t)(Wire.read() << 8);
-	
+
 	//noInterrupts();
 	this->x = x;
 	this->y = y;

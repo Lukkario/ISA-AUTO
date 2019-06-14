@@ -12,12 +12,12 @@
 
 /*
  * Silniki, sterowanie PWM
- * 
+ *
  */
- 
+
 #define A_ENABLE		2	//PWM
 #define A_PHASE			46  //0 - przod, 1 - tyl DIGITAL
-	
+
 #define B_ENABLE		3	//PWM
 #define B_PHASE			48	//0 - przod, 1 - tyl DIGITAL
 #define MODE			44	//sterowanie 0 - ciężkie, 1 - uproszczone DIGITAL
@@ -27,7 +27,7 @@
  * Silnik, sterowanie PWM
  * L298N (https://botland.com.pl/pl/sterowniki-silnikow-moduly/3164-l298n-dwukanalowy-sterownik-silnikow-modul-12v2a.html)
  */
- 
+
 #define LEFT_PWM		3
 #define LEFT_IN1		47	// in1 (l298n)
 #define LEFT_IN2		46	// in2 (l298n)
@@ -41,8 +41,8 @@
  *
  */
 #define ENCODER_LEFT	50	// Enkoder lewej strony
-#define ENCODER_RIGHT	51	// Enkoder prawej strony	
-	
+#define ENCODER_RIGHT	51	// Enkoder prawej strony
+
 enum class EngineSelector
 {
 	Left,
@@ -51,7 +51,7 @@ enum class EngineSelector
 
 
 
- 
+
 /*
  * Czujniki odległości
  * Moduł HC-SR04
@@ -72,19 +72,19 @@ enum class EngineSelector
 #define US_RIGHT				3
 #define US_RIGHT_TRIGGER_PIN	4
 #define US_RIGHT_ECHO_PIN		5
- 
+
 enum class UltraSoundSensor {
 	Front = 0,
 	Back = 1,
 	Left = 2,
 	Right = 3,
-	
+
 	__first = Front,
 	__last = Right,
-	
+
 	All,
 };
- 
+
 int ultrasound_trigger_pin[] = {
 	[UltraSoundSensor::Front]	= US_FRONT_TRIGGER_PIN,
 	[UltraSoundSensor::Back]	= US_BACK_TRIGGER_PIN,
@@ -92,7 +92,7 @@ int ultrasound_trigger_pin[] = {
 	[UltraSoundSensor::Right]	= US_RIGHT_TRIGGER_PIN,
 };
 
- 
+
 int ultrasound_echo_pin[] = {
 	[UltraSoundSensor::Front]	= US_FRONT_ECHO_PIN,
 	[UltraSoundSensor::Back]	= US_BACK_ECHO_PIN,
@@ -102,5 +102,5 @@ int ultrasound_echo_pin[] = {
 
 
 
- 
+
 #endif // _ISA_MOBILE_H_

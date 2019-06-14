@@ -43,7 +43,7 @@ class QMC5883
 		void reset(void);
 
 		void measure(void);
-	
+
 	public:
 		int16_t getX(void) const { return this->x; }
 		int16_t getY(void) const { return this->y; }
@@ -51,5 +51,3 @@ class QMC5883
 };
 
 #endif // _QMC5883_HPP_
-
-
