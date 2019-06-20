@@ -1,12 +1,20 @@
 #include <Arduino.h>
 #include <math.h>
-#include <ISAMobile.h>
-#include <HMC5883L.h>
+#include "ISAMobile.h"
 #include "move.h"
+#include "distance.h"
 #include <DueTimer.h>
+#include <Wire.h>
+
+#define RESOLUTION_BOTTOM 9 //-kąta docelowego
+#define RESOLUTION_TOP 9 //+kąta docelowego
+
+//int angles[] = {210, 230, 270, 290, 336, 17, 90, 156};
+int angles[] = {0, 246, 167, 96};
+int numberOfAngle = 2;
 
 QMC5883 qmc;
-HMC5883L compass;
+// Adafruit_HMC5883_Unified mag = Adafruit_HMC5883_Unified(0x0D);
 
 int16_t startX = 0;
 int16_t startY = 0;
@@ -16,84 +24,112 @@ bool calib = true;
 int avgx = 0;
 int avgy = 0;
 
-// void stopCalibrate()
-// {
-//   calib = false;
-// }
-//
-// void calibrate()
-// {
-//   moveForward(EngineSelector::Right, 90);
-//   moveBackwards(EngineSelector::Left, 150);
-//
-//   int minx = 0;
-//   int maxx = 0;
-//   int miny = 0;
-//   int maxy = 0;
-//   while(calib)
-//   {
-//     qmc.measure();
-//     if(qmc.getX() > maxx)
-//       maxx = qmc.getX();
-//     if(qmc.getX() < minx)
-//       minx = qmc.getX();
-//     if(qmc.getY() > maxy)
-//       maxy = qmc.getX();
-//     if (qmc.getY() < miny)
-//       miny = qmc.getY();
-//
-//   }
-//   avgx = (maxx - minx) / 2;
-//   avgy = (maxy - miny) / 2;
-//   stop();
-//   Timer4.stop();
-// }
 
-int getAngle()
+float getAngle()
 {
-  int x = 0;
-  int y = 0;
-  for(byte i = 0; i < 5; i++)
-  {
+
     qmc.measure();
-    x += qmc.getX();
-    y += qmc.getY();
-  }
-  x /= 5;
-  y /= 5;
   // Serial.print("Y = ");
   // Serial.print(qmc.getY());
   // Serial.print(" X = ");
   // Serial.println(qmc.getX());
-  int angle = atan2(y - avgy, x - avgx) * (180.0 / M_PI); // convert to degrees
-  return angle;
-  // return angle < 0 ? (int)(angle + 360) : (int)angle;
+
+  float angle = atan2(qmc.getY(), qmc.getX()) * (180.0 / M_PI); // convert to degrees
+  return angle < 0 ? (angle + 360) : angle;
 }
 
-void turn(int16_t deg)
+// void initalize(){
+//   turnRight(200);
+//   do{
+//   }while(!((getAngle() >= angles[0] - RESOLUTION_BOTTOM) && (getAngle() <= angles[0] + RESOLUTION_TOP)));
+// }
+//
+// boolean checkIfFinishAngle() {
+//   if(numberOfAngle == 6 && ((getAngle() >= angles[numberOfAngle] - 10) && (getAngle() <= angles[numberOfAngle] + 10))) {
+//      numberOfAngle+=2;
+//     if(numberOfAngle > 7) {
+//       numberOfAngle = 0;
+//     }
+//     return true;
+//   }
+//   if(((getAngle() >= angles[numberOfAngle] - RESOLUTION_BOTTOM) && (getAngle() <= angles[numberOfAngle] + RESOLUTION_TOP))) {
+//     numberOfAngle+=2;
+//     if(numberOfAngle > 7) {
+//       numberOfAngle = 0;
+//     }
+//     return true;
+//   }
+//     return false;
+// }
+//
+void test()
 {
-    int now;
-    int last = getAngle();
-    int rot = 0;
-    //Serial.println(start);
-    while(rot <= deg)
-    {
-      now = getAngle();
-      if(now > last + 20)
-        now = last;
-      // if(now >= 280 && startAngle < 300)
-      //   now -= 360;
-      rot += abs(now - startAngle);
-      Serial.print("Start = ");
-      Serial.print(startAngle);
-      Serial.print(" Now = ");
-      Serial.print(now);
-      Serial.print(" Rot = ");
-      Serial.println(rot);
-      startAngle = now;
-      // delay(1000);
-    }
+  delay(500);
+  while(getDistance(SensorSide::Front) > 20)
+  {
+    moveForward(150);
+  }
+  stop();
+
+  while(getDistance(SensorSide::Left)>25)
+  {
+  turnRight(170);
+  }
+  while(getDistance(SensorSide::Left) < 50)
+  {
+    moveForward(150);
+  }
+  stop();
+  delay(500);
+  turnLeft(150);
+  while (getAngle() > angles[0] + 10 && getAngle() < angles[0] - 10) {
+  }
+  stop();
+
 }
+
+// void test()
+// {
+//   moveForward(150);
+//   delay(1000);
+//   stop();
+//   delay(500);
+//   turnRight(120);
+//   while (!(getAngle() + RESOLUTION_TOP > angles[1] && getAngle() - RESOLUTION_BOTTOM < angles[1])) {
+//   }
+//   stop();
+//   delay(500);
+//
+//   moveForward(150);
+//   delay(1000);
+//   stop();
+//   delay(500);
+//   turnRight(120);
+//   while (!(getAngle() + RESOLUTION_TOP > angles[2] && getAngle() - RESOLUTION_BOTTOM < angles[2])) {
+//   }
+//   stop();
+//   delay(500);
+//
+//   moveForward(150);
+//   delay(1000);
+//   stop();
+//   delay(500);
+//   turnRight(120);
+//   while (!(getAngle() + RESOLUTION_TOP > angles[3] && getAngle() - RESOLUTION_BOTTOM < angles[3])) {
+//   }
+//   stop();
+//   delay(500);
+//
+//   moveForward(150);
+//   delay(1000);
+//   stop();
+//   delay(500);
+//   turnRight(120);
+//   while (!(getAngle() + RESOLUTION_TOP > angles[0] && getAngle() - RESOLUTION_BOTTOM < angles[0])) {
+//   }
+//   stop();
+//   delay(500);
+// }
 
 void setup()
 {
@@ -126,31 +162,52 @@ void setup()
     Serial.begin(9600);
     // Serial.print("Test... ");
 Wire.begin();
-
-while (!compass.begin())
-  {
-    Serial.println("Nie odnaleziono HMC5883L, sprawdz polaczenie!");
-    delay(500);
-  }
-    qmc.init();
-
-    // Timer4.attachInterrupt(stopCalibrate);
-    // Timer4.start(8000000);
-    // calibrate();
-    // Serial.println(avgx);
-    // Serial.println(avgy);
-    // delay(5000);
+qmc.init();
+// initalize();
+test();
 }
+
 
 void loop()
 {
-    // moveForward(170);
-    // delay(2000);
-    // stop();
-    // delay(100);
-    // startAngle = getAngle();
-    // turnRight(70);
-    // turn(80);
-    // stop();
-    // delay(100);
+  // delay(1000);
+  // Serial.print("SAMPLE: ");
+  // Serial.println(getSampledDistance(SensorSide::Front));
+  // Serial.print("RAW: ");
+ // Serial.println(getDistance(SensorSide::Front));
+  // delay(100);
+
+  //    moveForward(170);
+  //    delay(2000);
+  //    stop();
+  //    delay(1000);
+  //    turnLeft(200);
+  // do{
+  //
+  // }while(!(checkIfFinishAngle()));
+
+  //    stop();
+  //    delay(1000);
+// //  stop();
+// while(getDistance(SensorSide::Front) > 20)
+// {
+// moveForward(200);
+// }
+// stop();
+// while(getDistance(SensorSide::Left)>25)
+// {
+// turnRight(200);
+// }
+// do{
+//
+//   }while(!(checkIfFinishAngle()));
+//      stop();
+//      delay(1000);
+// break;
+// }
+// if(getAngle() + 10 > angles[1] && getAngle() - 10 < angles[1])
+//   Serial.println(getAngle());
+// delay(500);
+
+
 }

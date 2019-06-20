@@ -8,6 +8,8 @@
 #define LEFT_E  US_LEFT_ECHO_PIN
 #define RIGHT_E US_RIGHT_ECHO_PIN
 
+#define SAMPLES 2
+
 enum SensorSide
 {
   Front,
@@ -18,8 +20,8 @@ enum SensorSide
 
 int measureSoundSpeed(int trigger_pin, int echo_pin)
 {
-  digitalWrite(trigger_pin, false);
-  delayMicroseconds(2);
+  // digitalWrite(trigger_pin, false);
+  // delayMicroseconds(2);
   digitalWrite(trigger_pin, true);
   delayMicroseconds(10);
   digitalWrite(trigger_pin, false);
@@ -43,4 +45,14 @@ int getDistance(SensorSide side)
       return measureSoundSpeed(RIGHT_T, RIGHT_E);
       break;
   }
+}
+
+int getSampledDistance(SensorSide side)
+{
+  int sum = 0;
+  for(int i = 0; i < SAMPLES; i++)
+  {
+    sum += getDistance(side);
+  }
+  return (int)(sum/SAMPLES);
 }
