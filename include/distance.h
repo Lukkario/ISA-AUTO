@@ -8,7 +8,7 @@
 #define LEFT_E  US_LEFT_ECHO_PIN
 #define RIGHT_E US_RIGHT_ECHO_PIN
 
-#define SAMPLES 2
+#define SAMPLES 5
 
 enum SensorSide
 {
@@ -20,12 +20,12 @@ enum SensorSide
 
 int measureSoundSpeed(int trigger_pin, int echo_pin)
 {
-  // digitalWrite(trigger_pin, false);
-  // delayMicroseconds(2);
-  digitalWrite(trigger_pin, true);
+  digitalWrite(trigger_pin, LOW);
+  delayMicroseconds(5);
+  digitalWrite(trigger_pin, HIGH);
   delayMicroseconds(10);
-  digitalWrite(trigger_pin, false);
-  int duration = pulseIn(echo_pin, true, 50*1000);
+  digitalWrite(trigger_pin, LOW);
+  int duration = pulseIn(echo_pin, HIGH);
   return (int)((float)duration * 0.03438f * 0.5f);
 }
 
