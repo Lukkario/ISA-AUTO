@@ -5,10 +5,10 @@
 #include "distance.h"
 #include <DueTimer.h>
 
-#define RESOLUTION_BOTTOM 9
-#define RESOLUTION_TOP 9
+#define RESOLUTION_BOTTOM 4
+#define RESOLUTION_TOP 4
 
-int angles[] = {1, 239, 162, 85};
+int angles[] = {265, 175, 100, 21};
 
 QMC5883 qmc;
 
@@ -21,59 +21,70 @@ float getAngle()
 
 void test()
 {
+  int forward = 220;
+  int turn = 255;
   int i = 1;
   delay(500);
-  moveForward(200);
+  moveForward(forward);
   while(getDistance(SensorSide::Front) > 20)
   {
+    if(getDistance(SensorSide::Front) < 70)
+    {
+      if(getDistance(SensorSide::Front) < 70)
+      {
+        moveForward( forward - ( forward/getDistance(SensorSide::Front) ) *12 );
+      }
+    }
   }
 
-  turnRight(200);
-  while(getDistance(SensorSide::Left) > 25)
-  {
+  turnRight(turn);
+  while(!(getAngle() + RESOLUTION_TOP > angles[1] && getAngle() - RESOLUTION_BOTTOM - 10 < angles[1])) {
   }
+  // while(getDistance(SensorSide::Left) > 25)
+  // {
+  // }
 
-  moveForward(200);
+  moveForward(forward);
   while(getDistance(SensorSide::Left) < 50)
   {
       i++;
   }
-  delay(300);
+  delay(100);
 
-  turnLeft(120);
+  turnLeft(turn);
   while(!(getAngle() + RESOLUTION_TOP > angles[0] && getAngle() - RESOLUTION_BOTTOM - 10 < angles[0])) {
   }
   stop();
   delay(500);
-  moveForward(200);
+  moveForward(forward);
   while (getDistance(SensorSide::Left) > 25) {
 
   }
   stop();
   delay(500);
 
-  moveForward(200);
+  moveForward(forward);
   while (getDistance(SensorSide::Left) < 30) {
 
   }
   delay(300);
 
-  turnLeft(120);
+  turnLeft(turn);
   while(!(getAngle() + RESOLUTION_TOP > angles[3] && getAngle() - RESOLUTION_BOTTOM - 10 < angles[3])) {
   }
 
-  moveForward(200);
+  moveForward(forward);
   while(getDistance(SensorSide::Left) > 25)
   {
 
   }
   stop();
-  moveForward(200);
+  moveForward(forward);
   while (i) {
       i--;
   }
 delay(300);
-  turnRight(120);
+  turnRight(turn);
   while(!(getAngle() + RESOLUTION_TOP > angles[0] && getAngle() - RESOLUTION_BOTTOM - 10 < angles[0])) {
   }
   stop();
@@ -122,6 +133,34 @@ delay(300);
 //   delay(500);
 // }
 
+void init_angles()
+{
+  int i = 0;
+  while(true)
+  {
+    if(i > 3)
+      break;
+    if(Serial1.read() == '\n')
+    {
+      int angle = 0;
+      for(int j = 0; j < 10; j++)
+      {
+        angle += getAngle();
+      }
+      angles[i] = angle/10;
+      String c = String(angles[i]);
+      Serial1.write(c.c_str());
+      i++;
+
+    }
+  }
+  while(true)
+  {
+    if(Serial1.read() == '\n')
+      break;
+  }
+}
+
 void setup()
 {
   for (int i = (int)UltraSoundSensor::__first; i <= (int)UltraSoundSensor::__last; i++)
@@ -151,15 +190,18 @@ void setup()
     pinMode(ENCODER_RIGHT, INPUT);
 
     Serial.begin(9600);
+    Serial1.begin(9600);
     // Serial.print("Test... ");
 Wire.begin();
 qmc.init();
+init_angles();
 // test();
 }
 
 
 void loop()
 {
+
   // delay(1000);
   // Serial.print("SAMPLE: ");
   // Serial.println(getSampledDistance(SensorSide::Front));
@@ -172,6 +214,9 @@ void loop()
   // Serial.println(getAngle());
   // delay(500);
 //Serial.println(digitalRead(50));
+
   test();
-while(1){}
+// while(1){}
+
+
 }
