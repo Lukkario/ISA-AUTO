@@ -1,3 +1,4 @@
+#pragma once
 #include <Arduino.h>
 #include <ISAMobile.h>
 
@@ -11,7 +12,7 @@ void moveForward(EngineSelector side, int level)
         // do przodu
         digitalWrite(RIGHT_IN1, true);
   			digitalWrite(RIGHT_IN2, false);
-  			analogWrite(RIGHT_PWM, level + RIGHT_CONST);
+  			analogWrite(RIGHT_PWM, level);
     }
     else if (side == EngineSelector::Left)
     {
@@ -35,14 +36,14 @@ void moveBackwards(EngineSelector side, int level)
         // do przodu
         digitalWrite(RIGHT_IN1, false);
   			digitalWrite(RIGHT_IN2, true);
-  			analogWrite(RIGHT_PWM, -level - RIGHT_CONST);
+  			analogWrite(RIGHT_PWM, -level);
     }
     else if (side == EngineSelector::Left)
     {
         // do przodu
         digitalWrite(LEFT_IN1, true);
   			digitalWrite(LEFT_IN2, false);
-  			analogWrite(LEFT_PWM, -level - LEFT_CONST);
+  			analogWrite(LEFT_PWM, -level);
     }
 }
 
