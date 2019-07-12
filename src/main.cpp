@@ -182,15 +182,28 @@ fuzzy->fuzzify();
 float output = fuzzy->defuzzify(1);
 float output2 = fuzzy->defuzzify(2);
 float output3 = fuzzy->defuzzify(3);
-if(input2 <= 30)
+String s = String(output3);
+Serial1.write(s.c_str());
+Serial1.write('\n');
+String s2 = String(output);
+Serial1.write(s2.c_str());
+Serial1.write('\n');
+if(output3 >= 50)
 {
-  moveForward(EngineSelector::Right, (int) (output-output3));
-  moveForward(EngineSelector::Left, (int) (output+output3));
+  // stop();
+  // delay(10000);
+  moveForward(EngineSelector::Right, (int) (output-output3 - 10));
+  moveForward(EngineSelector::Left, (int) (output+output3 + 10));
 }
 else
 {
-  moveForward(EngineSelector::Right, (int) (output+output2));
-  moveForward(EngineSelector::Left, (int) (output-output2));
+  moveForward(EngineSelector::Right, (int) (output + output2));
+  moveForward(EngineSelector::Left, (int) (output - output2));
+  if(input < 50)
+  {
+    moveForward(EngineSelector::Right, (int) (output + output2));
+    moveBackwards(EngineSelector::Left, (int) (output + output2));
+  }
 }
 
 

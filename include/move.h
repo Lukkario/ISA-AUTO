@@ -7,6 +7,14 @@
 
 void moveForward(EngineSelector side, int level)
 {
+  if(level > 255)
+  {
+    level = 255;
+  }
+  else if(level < 0)
+  {
+    level = 0;
+  }
     if (side == EngineSelector::Right)
     {
         // do przodu
